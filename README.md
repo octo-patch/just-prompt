@@ -1,6 +1,6 @@
 # Just Prompt - A lightweight MCP server for LLM providers
 
-`just-prompt` is a Model Control Protocol (MCP) server that provides a unified interface to various Large Language Model (LLM) providers including OpenAI, Anthropic, Google Gemini, Groq, DeepSeek, and Ollama. See how we use the `ceo_and_board` tool to make [hard decisions easy with o3 here](https://youtu.be/LEMLntjfihA).
+`just-prompt` is a Model Control Protocol (MCP) server that provides a unified interface to various Large Language Model (LLM) providers including OpenAI, Anthropic, Google Gemini, Groq, DeepSeek, Ollama, and MiniMax. See how we use the `ceo_and_board` tool to make [hard decisions easy with o3 here](https://youtu.be/LEMLntjfihA).
 
 <img src="images/just-prompt-logo.png" alt="Just Prompt Logo" width="700" height="auto">
 
@@ -64,6 +64,9 @@ The following MCP tools are available in the server:
 - `l` or `ollama`: Ollama 
   - `l:llama3.1`
   - `ollama:llama3.1`
+- `m` or `minimax`: MiniMax
+  - `m:MiniMax-M3`
+  - `minimax:MiniMax-M2.7`
 
 ## Features
 
@@ -102,7 +105,19 @@ GEMINI_API_KEY=your_gemini_api_key_here
 GROQ_API_KEY=your_groq_api_key_here
 DEEPSEEK_API_KEY=your_deepseek_api_key_here
 OLLAMA_HOST=http://localhost:11434
+MINIMAX_API_KEY=your_minimax_api_key_here
+MINIMAX_REGION=global_en
+MINIMAX_PROTOCOL=openai
 ```
+
+MiniMax supports both `global_en` and `cn_zh` regions. The selected region provides
+an OpenAI-compatible base URL and an Anthropic-compatible base URL. Set
+`MINIMAX_PROTOCOL=anthropic` to use the Anthropic-compatible request format.
+The default global endpoints are `https://api.minimax.io/v1` and
+`https://api.minimax.io/anthropic`; the China endpoints are
+`https://api.minimaxi.com/v1` and `https://api.minimaxi.com/anthropic`.
+For a compatible gateway, override `MINIMAX_OPENAI_BASE_URL` and
+`MINIMAX_ANTHROPIC_BASE_URL`. The Anthropic base URL must end with `/anthropic`.
 
 ## Claude Code Installation
 > In all these examples, replace the directory with the path to the just-prompt directory.

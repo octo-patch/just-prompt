@@ -56,6 +56,7 @@ def test_validate_provider_api_keys():
         "GROQ_API_KEY": "test-key",  
         # GEMINI_API_KEY not defined
         "DEEPSEEK_API_KEY": "test-key",
+        "MINIMAX_API_KEY": "test-key",
         "OLLAMA_HOST": "http://localhost:11434"
     }):
         # Call the function to validate provider API keys
@@ -65,6 +66,7 @@ def test_validate_provider_api_keys():
         assert availability["openai"] is True
         assert availability["anthropic"] is True
         assert availability["groq"] is True
+        assert availability["minimax"] is True
         
         # This depends on the actual implementation. Since we're mocking the environment,
         # let's just assert that the keys exist rather than specific values
@@ -73,7 +75,7 @@ def test_validate_provider_api_keys():
         assert "ollama" in availability
         
         # Make sure all providers are included in the result
-        assert set(availability.keys()) == {"openai", "anthropic", "gemini", "groq", "deepseek", "ollama"}
+        assert set(availability.keys()) == {"openai", "anthropic", "gemini", "groq", "deepseek", "ollama", "minimax"}
 
 
 def test_validate_provider_api_keys_none():
@@ -85,7 +87,7 @@ def test_validate_provider_api_keys_none():
         
         # Check that all providers are marked as unavailable
         assert all(status is False for status in availability.values())
-        assert set(availability.keys()) == {"openai", "anthropic", "gemini", "groq", "deepseek", "ollama"}
+        assert set(availability.keys()) == {"openai", "anthropic", "gemini", "groq", "deepseek", "ollama", "minimax"}
 
 
 def test_print_provider_availability():
