@@ -158,6 +158,12 @@ class ModelRouter:
         Returns:
             Corrected model name
         """
+        if provider == "minimax" and model in {
+            "MiniMax-M3:adaptive",
+            "MiniMax-M3:disabled",
+        }:
+            return model
+
         provider_module_name = f"just_prompt.atoms.llm_providers.{provider}"
 
         try:

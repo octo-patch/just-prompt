@@ -113,3 +113,18 @@ def test_validate_and_correct_claude4_models():
     result = ModelRouter.validate_and_correct_model("anthropic", "claude-opus-4-20250514")
     assert result == "claude-opus-4-20250514", f"Expected bypass for claude-4 model, got {result}"
 
+
+@pytest.mark.parametrize("thinking_mode", ["adaptive", "disabled"])
+@patch("importlib.import_module")
+def test_magic_model_correction_preserves_minimax_thinking_mode(
+    mock_import_module, thinking_mode
+):
+    model = f"MiniMax-M3:{thinking_mode}"
+
+    assert (
+        ModelRouter.magic_model_correction(
+            "minimax", model, "anthropic:claude-sonnet-4-20250514"
+        )
+        == model
+    )
+    mock_import_module.assert_not_called()
