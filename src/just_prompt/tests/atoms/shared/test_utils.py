@@ -37,6 +37,7 @@ def test_get_provider_from_prefix():
     assert get_provider_from_prefix("groq") == "groq"
     assert get_provider_from_prefix("deepseek") == "deepseek"
     assert get_provider_from_prefix("ollama") == "ollama"
+    assert get_provider_from_prefix("minimax") == "minimax"
     
     # Test short names
     assert get_provider_from_prefix("o") == "openai"
@@ -45,6 +46,7 @@ def test_get_provider_from_prefix():
     assert get_provider_from_prefix("q") == "groq"
     assert get_provider_from_prefix("d") == "deepseek"
     assert get_provider_from_prefix("l") == "ollama"
+    assert get_provider_from_prefix("m") == "minimax"
     
     # Test invalid prefix
     with pytest.raises(ValueError):

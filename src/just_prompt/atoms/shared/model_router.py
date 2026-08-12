@@ -3,7 +3,7 @@ Model router for dispatching requests to the appropriate provider.
 """
 
 import logging
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 import importlib
 from .utils import split_provider_and_model
 from .data_types import ModelProviders
@@ -33,7 +33,8 @@ class ModelRouter:
             "claude-3-7-sonnet-20250219",
             "claude-opus-4-20250514", 
             "claude-sonnet-4-20250514",
-            "gemini-2.5-flash-preview-04-17"
+            "gemini-2.5-flash-preview-04-17",
+            "MiniMax-M3",
         ]
         if any(thinking_model in model_name for thinking_model in thinking_models):
             return model_name
@@ -76,7 +77,9 @@ class ModelRouter:
             return model_name
 
     @staticmethod
-    def route_prompt(model_string: str, text: str) -> str:
+    def route_prompt(
+        model_string: str, text: Union[str, List[Dict[str, Any]]]
+    ) -> str:
         """
         Route a prompt to the appropriate provider.
 

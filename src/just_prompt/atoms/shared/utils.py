@@ -93,7 +93,8 @@ def get_api_key(provider: str) -> Optional[str]:
         "anthropic": "ANTHROPIC_API_KEY",
         "gemini": "GEMINI_API_KEY",
         "groq": "GROQ_API_KEY",
-        "deepseek": "DEEPSEEK_API_KEY"
+        "deepseek": "DEEPSEEK_API_KEY",
+        "minimax": "MINIMAX_API_KEY"
     }
     
     env_var = key_mapping.get(provider)

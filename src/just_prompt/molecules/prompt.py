@@ -2,7 +2,7 @@
 Prompt functionality for just-prompt.
 """
 
-from typing import List
+from typing import Any, Dict, List, Union
 import logging
 import concurrent.futures
 import os
@@ -13,7 +13,9 @@ from ..atoms.shared.model_router import ModelRouter
 logger = logging.getLogger(__name__)
 
 
-def _process_model_prompt(model_string: str, text: str) -> str:
+def _process_model_prompt(
+    model_string: str, text: Union[str, List[Dict[str, Any]]]
+) -> str:
     """
     Process a single model prompt.
     
@@ -50,7 +52,10 @@ def _correct_model_name(provider: str, model: str, correction_model: str) -> str
         return model
 
 
-def prompt(text: str, models_prefixed_by_provider: List[str] = None) -> List[str]:
+def prompt(
+    text: Union[str, List[Dict[str, Any]]],
+    models_prefixed_by_provider: List[str] = None,
+) -> List[str]:
     """
     Send a prompt to multiple models using parallel processing.
     

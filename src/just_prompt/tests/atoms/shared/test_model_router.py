@@ -56,6 +56,29 @@ def test_route_list_models(mock_import_module):
         ModelRouter.route_list_models("unknown")
 
 
+@patch.object(ModelRouter, "validate_and_correct_model", return_value="MiniMax-M3")
+@patch("importlib.import_module")
+def test_route_prompt_preserves_multimodal_content(
+    mock_import_module, mock_validate_model
+):
+    """Test routing structured content without converting it to text."""
+    mock_module = MagicMock()
+    mock_module.prompt.return_value = "A short scene"
+    mock_import_module.return_value = mock_module
+    content = [
+        {"type": "text", "text": "Describe this"},
+        {
+            "type": "image_url",
+            "image_url": {"url": "https://example.com/frame.png"},
+        },
+    ]
+
+    response = ModelRouter.route_prompt("minimax:MiniMax-M3", content)
+
+    assert response == "A short scene"
+    mock_module.prompt.assert_called_once_with(content, "MiniMax-M3")
+
+
 def test_validate_and_correct_model_shorthand():
     """Test validation and correction of shorthand model names like a:sonnet.3.7."""
     try:
@@ -89,5 +112,4 @@ def test_validate_and_correct_claude4_models():
     
     result = ModelRouter.validate_and_correct_model("anthropic", "claude-opus-4-20250514")
     assert result == "claude-opus-4-20250514", f"Expected bypass for claude-4 model, got {result}"
-
 

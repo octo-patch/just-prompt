@@ -64,6 +64,15 @@ The following MCP tools are available in the server:
 - `l` or `ollama`: Ollama 
   - `l:llama3.1`
   - `ollama:llama3.1`
+- `m` or `minimax`: MiniMax
+  - `m:MiniMax-M3:adaptive`
+  - `minimax:MiniMax-M3:disabled`
+  - `minimax:MiniMax-M2.7`
+
+MiniMax supports `global_en` and `cn_zh` regional endpoints through either its
+OpenAI-compatible or Anthropic-compatible protocol. MiniMax-M3 accepts OpenAI
+content parts with `text`, `image_url`, and `video_url` types. Append
+`:adaptive` or `:disabled` to MiniMax-M3 to select its thinking mode.
 
 ## Features
 
@@ -101,6 +110,9 @@ ANTHROPIC_API_KEY=your_anthropic_api_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
 GROQ_API_KEY=your_groq_api_key_here
 DEEPSEEK_API_KEY=your_deepseek_api_key_here
+MINIMAX_API_KEY=your_minimax_api_key_here
+MINIMAX_REGION=global_en
+MINIMAX_PROTOCOL=openai
 OLLAMA_HOST=http://localhost:11434
 ```
 

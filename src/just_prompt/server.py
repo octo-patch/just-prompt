@@ -6,7 +6,7 @@ import asyncio
 import logging
 import os
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
@@ -43,7 +43,10 @@ class JustPromptTools:
 
 # Schema classes for MCP tools
 class PromptSchema(BaseModel):
-    text: str = Field(..., description="The prompt text")
+    text: Union[str, List[Dict[str, Any]]] = Field(
+        ...,
+        description="Prompt text or MiniMax OpenAI-compatible content parts",
+    )
     models_prefixed_by_provider: Optional[List[str]] = Field(
         None, 
         description="List of models with provider prefixes (e.g., 'openai:gpt-4o' or 'o:gpt-4o'). If not provided, uses default models."
