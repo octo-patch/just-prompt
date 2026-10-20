@@ -65,8 +65,8 @@ The following MCP tools are available in the server:
   - `l:llama3.1`
   - `ollama:llama3.1`
 - `m` or `minimax`: MiniMax
-  - `m:MiniMax-M3`
-  - `minimax:MiniMax-M2.7`
+  - `m:MiniMax-M3.1-Flash`
+  - `minimax:MiniMax-M3`
 
 ## Features
 
@@ -118,6 +118,15 @@ The default global endpoints are `https://api.minimax.io/v1` and
 `https://api.minimaxi.com/v1` and `https://api.minimaxi.com/anthropic`.
 For a compatible gateway, override `MINIMAX_OPENAI_BASE_URL` and
 `MINIMAX_ANTHROPIC_BASE_URL`. The Anthropic base URL must end with `/anthropic`.
+
+The MiniMax catalog lists `MiniMax-M3.1-Flash` first, followed by `MiniMax-M3`,
+filtered to models advertised by the endpoint when available. The offline fallback
+is limited to direct regional endpoints; custom gateways must advertise their models.
+To choose Flash as your default, start the server with
+`uv run just-prompt --default-models minimax:MiniMax-M3.1-Flash`. Explicit saved,
+legacy, and custom MiniMax model IDs are sent unchanged and are not automatically
+corrected to a catalog entry. Requests retain the API's default thinking behavior;
+this provider does not add thinking or effort parameters.
 
 ## Claude Code Installation
 > In all these examples, replace the directory with the path to the just-prompt directory.

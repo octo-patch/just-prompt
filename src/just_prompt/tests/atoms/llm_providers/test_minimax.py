@@ -112,6 +112,17 @@ def test_anthropic_request_capture(monkeypatch, capture_server):
     assert request["body"]["model"] == "MiniMax-M3"
 
 
-def test_list_models_fallback_contains_target_models(monkeypatch):
+@pytest.mark.parametrize("protocol", ["openai", "anthropic"])
+def test_list_models_fallback_contains_target_models(monkeypatch, protocol):
+    monkeypatch.setenv("MINIMAX_PROTOCOL", protocol)
     monkeypatch.delenv("MINIMAX_API_KEY", raising=False)
-    assert minimax.list_models() == ["MiniMax-M3", "MiniMax-M2.7"]
+    assert minimax.list_models() == ["MiniMax-M3.1-Flash", "MiniMax-M3"]
+
+
+@pytest.mark.parametrize("protocol", ["openai", "anthropic"])
+def test_custom_gateway_does_not_guess_offline_models(monkeypatch, protocol):
+    monkeypatch.setenv("MINIMAX_PROTOCOL", protocol)
+    monkeypatch.delenv("MINIMAX_API_KEY", raising=False)
+    monkeypatch.setenv("MINIMAX_OPENAI_BASE_URL", "https://gateway.example/v1")
+    monkeypatch.setenv("MINIMAX_ANTHROPIC_BASE_URL", "https://gateway.example/anthropic")
+    assert minimax.list_models() == []

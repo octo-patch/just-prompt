@@ -22,7 +22,7 @@ _ENDPOINTS: Dict[str, Dict[str, str]] = {
         "anthropic_base_url": "https://api.minimaxi.com/anthropic",
     },
 }
-_FALLBACK_MODELS = ["MiniMax-M3", "MiniMax-M2.7"]
+_FALLBACK_MODELS = ["MiniMax-M3.1-Flash", "MiniMax-M3"]
 
 
 def _endpoint_config() -> Dict[str, str]:
@@ -97,13 +97,19 @@ def prompt(text: str, model: str) -> str:
 
 
 def list_models() -> List[str]:
-    """List available MiniMax models, with a local fallback for offline use."""
+    """List current MiniMax models, with an offline fallback for direct endpoints."""
+    fallback = []
     try:
-        if _protocol() == "openai":
+        protocol = _protocol()
+        endpoint = _endpoint_config()[f"{protocol}_base_url"]
+        if endpoint in {config[f"{protocol}_base_url"] for config in _ENDPOINTS.values()}:
+            fallback = list(_FALLBACK_MODELS)
+        if protocol == "openai":
             response = _openai_client().models.list()
         else:
             response = _anthropic_client().models.list()
-        return [model.id for model in response.data]
+        available = {model.id for model in response.data}
+        return [model for model in _FALLBACK_MODELS if model in available]
     except Exception as exc:
         logger.warning("Error listing MiniMax models: %s", exc)
-        return list(_FALLBACK_MODELS)
+        return fallback

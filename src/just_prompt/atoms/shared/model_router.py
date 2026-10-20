@@ -28,6 +28,10 @@ class ModelRouter:
         Returns:
             Validated and potentially corrected model name
         """
+        # The MiniMax catalog is curated, not an allowlist for explicit requests.
+        if ModelProviders.from_name(provider_name) == ModelProviders.MINIMAX:
+            return model_name
+
         # Early return for our thinking token models to bypass validation
         thinking_models = [
             "claude-3-7-sonnet-20250219",
@@ -155,6 +159,10 @@ class ModelRouter:
         Returns:
             Corrected model name
         """
+        # Preserve saved, legacy, and custom MiniMax IDs before model correction.
+        if ModelProviders.from_name(provider) == ModelProviders.MINIMAX:
+            return model
+
         provider_module_name = f"just_prompt.atoms.llm_providers.{provider}"
 
         try:
