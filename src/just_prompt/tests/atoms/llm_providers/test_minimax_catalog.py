@@ -1,6 +1,8 @@
 """Exercise MiniMax discovery and public prompt routing with real SDK payloads."""
 
+import inspect
 import json
+from importlib import import_module
 
 import httpx
 import pytest
@@ -15,10 +17,22 @@ def sdk_transport(monkeypatch):
     requests = []
     models = ["MiniMax-M2.7", "MiniMax-M3", "custom-model", "MiniMax-M3.1-Flash"]
 
+    http_client_annotation = inspect.signature(
+        minimax.anthropic.Anthropic
+    ).parameters["http_client"].annotation
+    anthropic_httpx = import_module(
+        "httpx2" if "httpx2" in str(http_client_annotation) else "httpx"
+    )
+
     def handle(request):
         requests.append(request)
+        response_class = (
+            anthropic_httpx.Response
+            if isinstance(request, anthropic_httpx.Request)
+            else httpx.Response
+        )
         if request.method == "GET":
-            return httpx.Response(200, json={
+            return response_class(200, json={
                 "object": "list", "has_more": False,
                 "data": [{"id": model, "object": "model", "type": "model",
                           "display_name": model, "created_at": "2026-01-01T00:00:00Z"}
@@ -35,15 +49,16 @@ def sdk_transport(monkeypatch):
                         "model": body["model"], "content": [{"type": "text", "text": "ok"}],
                         "stop_reason": "end_turn", "stop_sequence": None,
                         "usage": {"input_tokens": 1, "output_tokens": 1}}
-        return httpx.Response(200, json=response)
+        return response_class(200, json=response)
 
-    transport = httpx.MockTransport(handle)
+    openai_transport = httpx.MockTransport(handle)
+    anthropic_transport = anthropic_httpx.MockTransport(handle)
     openai_class = minimax.OpenAI
     anthropic_class = minimax.anthropic.Anthropic
     monkeypatch.setattr(minimax, "OpenAI", lambda **kwargs: openai_class(
-        **kwargs, http_client=httpx.Client(transport=transport)))
+        **kwargs, http_client=httpx.Client(transport=openai_transport)))
     monkeypatch.setattr(minimax.anthropic, "Anthropic", lambda **kwargs: anthropic_class(
-        **kwargs, http_client=httpx.Client(transport=transport)))
+        **kwargs, http_client=anthropic_httpx.Client(transport=anthropic_transport)))
     monkeypatch.setenv("MINIMAX_API_KEY", "test-key")
     for key in ("MINIMAX_OPENAI_BASE_URL", "MINIMAX_ANTHROPIC_BASE_URL"):
         monkeypatch.delenv(key, raising=False)
